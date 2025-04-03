@@ -101,7 +101,7 @@ def instrukcija_screen():
 
     while instructions_running:
         draw_gradient_background()
-        display_text("Instrukcija", WIDTH // 2, 100, font_size=50, bold=True)
+        display_text("INSTRUKCIJA", WIDTH // 2, 100, font_size=50, bold=True)
 
         instruction_lines = [
             "1. Spied 'SĀKT', lai sāktu testu.",
