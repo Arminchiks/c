@@ -4,42 +4,40 @@ import time
 
 pygame.init()
 
-# Screen dimensions
+
 WIDTH, HEIGHT = 1800, 1000
 
-# Colors (Updated)
-WHITE = (240, 240, 240)  # Off-white for gradient base
-LIGHT_GRAY = (220, 220, 220)  # For gradient
-BLACK = (20, 20, 20)  # Darker black for better contrast
+WHITE = (240, 240, 240)  
+LIGHT_GRAY = (220, 220, 220)  
+BLACK = (20, 20, 20)  
 RED = (255, 50, 50)
 BLUE = (50, 50, 255)
 GREEN = (50, 255, 50)
 YELLOW = (255, 255, 50)
-BUTTON_COLOR = (70, 130, 180)  # Steel Blue
+BUTTON_COLOR = (70, 130, 180)  
 BUTTON_HOVER_COLOR = (100, 160, 210)
-SHADOW_COLOR = (100, 100, 100)  # Gray shadow
+SHADOW_COLOR = (100, 100, 100)  
 BORDER_COLOR = (150, 150, 150)
 
-# Arrow colors and positions (unchanged)
+
 ARROW_COLORS = [RED, BLUE, GREEN, YELLOW]
 ARROW_KEYS = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]
 ARROW_POSITIONS = [
-    (WIDTH // 2, HEIGHT // 6),       # Up
-    (WIDTH // 2, 5 * HEIGHT // 6),   # Down
-    (WIDTH // 6, HEIGHT // 2),       # Left
-    (5 * WIDTH // 6, HEIGHT // 2),   # Right
+    (WIDTH // 2, HEIGHT // 6),       # Uz augšu
+    (WIDTH // 2, 5 * HEIGHT // 6),   # Uz leju
+    (WIDTH // 6, HEIGHT // 2),       # Pa kreisi
+    (5 * WIDTH // 6, HEIGHT // 2),   # Pa labi
 ]
 
-# Screen initialization
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Reakcijas Tests")
 
-# Fonts (Updated)
+
 font = pygame.font.SysFont("Arial", 40)
 small_font = pygame.font.SysFont("Arial", 30)
-title_font = pygame.font.SysFont("Arial", 60, bold=True)  #Title font
+title_font = pygame.font.SysFont("Arial", 60, bold=True)  
 
-# Global variables
 running = True
 highlighted = None
 last_highlighted = None
@@ -50,14 +48,14 @@ countdown = 3
 unlit_timer = 0
 light_delay = 0
 results = []
-max_tests = 5 # Adjusted to a more reasonable value
+max_tests = 5 
 test_count = 0
 game_over = False
 start_button_rect = None
 instruction_button_rect = None
 quit_button_rect = None
 
-# Helper functions
+
 def draw_gradient_background():
     """Draw a subtle gradient background."""
     for i in range(HEIGHT):
@@ -69,7 +67,7 @@ def draw_gradient_background():
         pygame.draw.line(screen, color, (0, i), (WIDTH, i))
 
 def draw_rounded_button(text, x, y, width, height, color, hover_color):
-    """Draw a rounded button with shadow and handle hover effect."""
+
     mouse_pos = pygame.mouse.get_pos()
     button_rect = pygame.Rect(x, y, width, height)
     
@@ -77,29 +75,28 @@ def draw_rounded_button(text, x, y, width, height, color, hover_color):
     if button_rect.collidepoint(mouse_pos):
         current_color = hover_color
     
-    # Draw shadow
     shadow_offset = 5
     shadow_rect = pygame.Rect(x + shadow_offset, y + shadow_offset, width, height)
     pygame.draw.rect(screen, SHADOW_COLOR, shadow_rect, border_radius=15)
     
-    # Draw button
+    
     pygame.draw.rect(screen, current_color, button_rect, border_radius=15)
     
-    text_surface = font.render(text, True, WHITE)  # White text
+    text_surface = font.render(text, True, WHITE) 
     text_rect = text_surface.get_rect(center=button_rect.center)
     screen.blit(text_surface, text_rect)
     
     return button_rect
 
 def display_text(text, x, y, color=BLACK, center=True, font_name="Arial", font_size=30, bold=False):
-    """Display text on the screen."""
+  
     font = pygame.font.SysFont(font_name, font_size, bold)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y)) if center else text_surface.get_rect(topleft=(x, y))
     screen.blit(text_surface, text_rect)
 
 def instrukcija_screen():
-    """Show the instruction screen."""
+   
     instructions_running = True
 
     while instructions_running:
@@ -125,46 +122,46 @@ def instrukcija_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                return False  # Exit game
+                return False 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if return_button_rect.collidepoint(mouse_pos):
                     return True
 
-    return True  # Return to main menu
+    return True 
 
 def draw_arrows(highlighted=None):
-    """Draw arrows on the screen, optionally highlighting one with a glow effect."""
-    arrow_size = 140  # Adjust arrow size as needed
-    glow_radius = 24  # Adjust glow radius as needed
+ 
+    arrow_size = 140  
+    glow_radius = 24  
 
     for i, pos in enumerate(ARROW_POSITIONS):
         color = ARROW_COLORS[i] if i == highlighted else BLACK
 
-        # Arrow coordinates
+        
         x, y = pos
 
-        # Draw arrow based on direction
-        if i == 0:  # Up arrow
+       
+        if i == 0:  # Uz augšu
             points = [(x, y - arrow_size), (x - arrow_size // 2, y), (x + arrow_size // 2, y)]
-        elif i == 1:  # Down arrow
+        elif i == 1:  # Uz leju
             points = [(x, y + arrow_size), (x - arrow_size // 2, y), (x + arrow_size // 2, y)]
-        elif i == 2:  # Left arrow
+        elif i == 2:  # Kreisais
             points = [(x - arrow_size, y), (x, y - arrow_size // 2), (x, y + arrow_size // 2)]
-        else:  # Right arrow
+        else:  # Labais
             points = [(x + arrow_size, y), (x, y - arrow_size // 2), (x, y + arrow_size // 2)]
 
-        # Draw glow effect if highlighted
+       
         if i == highlighted:
             for r in range(glow_radius, 0, -2):
-                glow_color = color + (50,)  # Increase alpha for glow
+                glow_color = color + (50,) 
                 pygame.draw.polygon(screen, glow_color, points)
 
-        # Draw arrow
+    
         pygame.draw.polygon(screen, color, points)
 
 def display_results(results):
-    """Display the results after the game is over and show the restart button."""
+   
     draw_gradient_background()
     display_text("Rezultāti", WIDTH // 2, 50, color=BLACK, font_size=50, bold=True)
     
@@ -197,7 +194,7 @@ def display_results(results):
     return restart_button_rect
 
 def main():
-    """Main game function."""
+  
     global running, highlighted, last_highlighted, start_time, game_started
     global start_button_clicked, countdown, unlit_timer, light_delay, results, test_count, game_over
     global start_button_rect, instruction_button_rect, quit_button_rect, max_tests
@@ -263,11 +260,11 @@ def main():
                         game_over = True
 
         if not start_button_clicked:
-            # Draw border around the game area
+        
             border_rect = pygame.Rect(WIDTH // 6 - 5, HEIGHT // 6 - 5, 2 * WIDTH // 3 + 10 , 2 * HEIGHT // 3 + 10 )
             pygame.draw.rect(screen, BORDER_COLOR, border_rect, 5)
 
-            #Main Menu Buttons
+        
             start_button_rect = draw_rounded_button("SĀKT", WIDTH // 2 - 150, HEIGHT // 2 - 100, 300, 80, BUTTON_COLOR, BUTTON_HOVER_COLOR)
             instruction_button_rect = draw_rounded_button("Instrukcija", WIDTH // 2 - 150, HEIGHT // 2 + 20, 300, 80, BUTTON_COLOR, BUTTON_HOVER_COLOR)
             quit_button_rect = draw_rounded_button("IZIET", WIDTH // 2 - 150, HEIGHT // 2 + 140, 300, 80, BUTTON_COLOR, BUTTON_HOVER_COLOR)
